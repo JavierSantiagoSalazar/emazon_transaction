@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                             Constants.OPEN_API_SWAGGER_UI,
                             Constants.OPEN_API_V3_API_DOCS
                     ).permitAll();
-                    http.requestMatchers(HttpMethod.PATCH, Constants.ADD_SUPPLY_URL)
+                    http.requestMatchers(HttpMethod.POST, Constants.ADD_SUPPLY_URL)
                             .hasRole(Constants.ROLE_WAREHOUSE_ASSISTANT);
                     http.anyRequest().authenticated();
                 })

@@ -3,7 +3,6 @@ package com.pragma.emazon_transaction.infrastructure.configuration.security.exce
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pragma.emazon_transaction.domain.utils.Constants;
 import com.pragma.emazon_transaction.infrastructure.configuration.exception.dto.Response;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             HttpServletRequest request,
             HttpServletResponse response,
             AuthenticationException authException
-    ) throws IOException, ServletException {
+    ) throws IOException {
 
         Response customResponse = Response.builder()
                 .statusCode(HttpStatus.UNAUTHORIZED)
@@ -34,7 +33,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         String jsonResponse = objectMapper.writeValueAsString(customResponse);
 
         response.getWriter().write(jsonResponse);
-
     }
 
 }
