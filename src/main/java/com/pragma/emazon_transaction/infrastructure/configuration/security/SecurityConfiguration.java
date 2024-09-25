@@ -37,11 +37,15 @@ public class SecurityConfiguration {
                     ).permitAll();
                     http.requestMatchers(HttpMethod.POST, Constants.ADD_SUPPLY_URL)
                             .hasRole(Constants.ROLE_WAREHOUSE_ASSISTANT);
+                    http.requestMatchers(HttpMethod.POST, Constants.ADD_NEW_REGISTER_URL)
+                            .hasRole(Constants.ROLE_ADMIN);
+                    http.requestMatchers(HttpMethod.GET).permitAll();
                     http.anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtValidatorFilter, BasicAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint))
+                        exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint)
+                )
                 .build();
     }
 

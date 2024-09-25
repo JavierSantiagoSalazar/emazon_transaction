@@ -14,5 +14,6 @@ public class Supply {
     private LocalDate supplyDate;
     private List<Integer> supplyArticleIds;
     private List<Integer> supplyArticleAmounts;
+    private LocalDate supplyRestockDate;
 
 }

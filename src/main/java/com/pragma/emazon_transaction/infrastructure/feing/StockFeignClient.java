@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
         name = Constants.STOCK_MICROSERVICE_NAME,
-        url = "${emazon-stock.url}",
+        url = "${emazon_stock.url}",
         configuration = ClientConfiguration.class,
         fallback = StockHystrixFallback.class
 )

@@ -19,7 +19,18 @@ public interface SupplyRequestMapper {
                 null,
                 LocalDate.now(),
                 mapSupplyArticlesIds(supplyRequests),
-                mapSupplyArticlesAmounts(supplyRequests)
+                mapSupplyArticlesAmounts(supplyRequests),
+                LocalDate.now().plusDays(Constants.DAYS_TO_RESTOCK)
+        );
+    }
+
+    default Supply toDomain(SupplyRequest supplyRequest) {
+        return new Supply(
+                null,
+                LocalDate.now(),
+                List.of(supplyRequest.getArticleId()),
+                List.of(supplyRequest.getArticleAmount()),
+                LocalDate.now().plusDays(Constants.DAYS_TO_RESTOCK)
         );
     }
 
@@ -31,7 +42,7 @@ public interface SupplyRequestMapper {
 
     default List<Integer> mapSupplyArticlesAmounts(List<SupplyRequest> supplyRequests) {
         return supplyRequests.stream()
-                .map(SupplyRequest::getAmount)
+                .map(SupplyRequest::getArticleAmount)
                 .toList();
     }
 

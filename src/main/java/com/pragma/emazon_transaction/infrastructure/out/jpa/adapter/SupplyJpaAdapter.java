@@ -6,6 +6,10 @@ import com.pragma.emazon_transaction.infrastructure.out.jpa.mapper.SupplyEntityM
 import com.pragma.emazon_transaction.infrastructure.out.jpa.repository.SupplyRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 @RequiredArgsConstructor
 public class SupplyJpaAdapter implements SupplyPersistencePort {
 
@@ -15,6 +19,20 @@ public class SupplyJpaAdapter implements SupplyPersistencePort {
     @Override
     public void saveSupplyTransaction(Supply supply) {
         supplyRepository.save(supplyEntityMapper.toEntity(supply));
+    }
+
+    @Override
+    public List<LocalDate> getRestockDate(List<Integer> articleIdList) {
+        List<LocalDate> restockDates = new ArrayList<>();
+
+        for (Integer articleId : articleIdList) {
+            LocalDate restockDate = supplyRepository.findLatestRestockDateForArticle(articleId.toString());
+            if (restockDate != null) {
+                restockDates.add(restockDate);
+            }
+        }
+
+        return restockDates;
     }
 
 }
