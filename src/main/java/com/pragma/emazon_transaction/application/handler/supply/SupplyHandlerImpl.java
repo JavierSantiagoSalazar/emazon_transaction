@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -24,6 +25,17 @@ public class SupplyHandlerImpl implements SupplyHandler {
     public void addSupplyToStock(List<SupplyRequest> supplyRequests) {
         Supply supply = supplyRequestMapper.toDomain(supplyRequests);
         supplyServicePort.addSupplyToStock(supply);
+    }
+
+    @Override
+    public void addNewRegisterFromStock(SupplyRequest supplyRequest) {
+        Supply supply = supplyRequestMapper.toDomain(supplyRequest);
+        supplyServicePort.addNewRegisterFromStock(supply);
+    }
+
+    @Override
+    public List<LocalDate> getRestockDate(List<Integer> articleIdList) {
+        return supplyServicePort.getRestockDate(articleIdList);
     }
 
 }

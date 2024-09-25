@@ -6,6 +6,9 @@ public class Constants {
         throw new IllegalStateException("Utility class");
     }
 
+    public static final String SUPPLY_NO_RESTOCKING_DATE = "No restocking date found for some items.";
+
+
     /* --- FEIGN CONSTANTS --- */
 
     public static final String STOCK_MICROSERVICE_NAME = "emazon-stock";
@@ -20,9 +23,20 @@ public class Constants {
     public static final String ERROR_PROCESSING_RESPONSE_BODY = "Error processing response body";
     public static final String STOCK_SERVICE_UNAVAILABLE = "The StockService is unavailable";
 
+    public static final String ADD_NEW_STOCK_REGISTER = "Add New Stock Register";
+    public static final String STOCK_REGISTER_ADDED = "Stock register added successfully";
+    public static final String INVALID_REQUEST = "Invalid request";
+    public static final String UNEXPECTED_ERROR = "Unexpected error occurred";
+
+
+    public static final String GET_RE_STOCK_DATES = "Get Restock Dates";
+    public static final String RESTOCK_DATES_FOUND = "Restock dates found successfully";
+    public static final String ARTICLE_NOT_FOUND = "Article not found";
+
     /* --- MAPSTRUCT CONSTANTS --- */
 
     public static final String SPRING_COMPONENT_MODEL = "spring";
+    public static final Short DAYS_TO_RESTOCK = 15;
 
     /* --- SECURITY EXCEPTIONS --- */
 
@@ -34,7 +48,7 @@ public class Constants {
     public static final String ARTICLE_ID_MUST_NOT_BE_NULL = "Article ID cannot be null";
     public static final String ARTICLE_ID_MUST_BE_POSITIVE = "Article ID must be a positive number";
     public static final String ARTICLE_AMOUNT_MUST_NOT_BE_NULL = "Article amount cannot be null";
-    public static final String ARTICLE_AMOUNT_MUST_BE_POSITIVE = "Article amount must be a positive number";
+    public static final String ARTICLE_AMOUNT_MUST_BE_POSITIVE = "Article amount must be a positive number or zero";
 
     /* --- OPENAPI CONSTANTS --- */
 
@@ -57,17 +71,17 @@ public class Constants {
     /* --- JWT CONSTANTS --- */
 
     public static final String CLAIM_AUTHORITIES = "authorities";
-    public static final String CLAIM_EXPIRATION = "exp";
     public static final String INVALID_TOKEN = "Token invalid, not Authorized";
     public static final String JWT_IS_EMPTY_ERROR = "The JWT is empty";
-    public static final String TOKEN_HAS_EXPIRED = "Token has expired";
 
     /* --- ROLES --- */
 
     public static final String ROLE_WAREHOUSE_ASSISTANT = "WAREHOUSE_ASSISTANT";
+    public static final String ROLE_ADMIN = "ADMIN";
 
     /* --- SECURITY CONSTANTS ---*/
 
     public static final String ADD_SUPPLY_URL = "/supply/";
+    public static final String ADD_NEW_REGISTER_URL = "/supply/add-new-register";
 
 }

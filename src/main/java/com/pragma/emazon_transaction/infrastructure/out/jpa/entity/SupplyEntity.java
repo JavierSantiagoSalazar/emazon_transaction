@@ -38,4 +38,7 @@ public class SupplyEntity {
     @Convert(converter = IntegerListConverter.class)
     private List<Integer> supplyArticleAmounts;
 
+    @Column(name = "supply_restock_date", nullable = false)
+    private LocalDate supplyRestockDate;
+
 }

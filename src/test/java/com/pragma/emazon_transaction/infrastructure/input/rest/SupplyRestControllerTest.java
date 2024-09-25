@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pragma.emazon_transaction.application.dto.supply.ListSupplyRequest;
 import com.pragma.emazon_transaction.application.dto.supply.SupplyRequest;
 import com.pragma.emazon_transaction.application.handler.supply.SupplyHandler;
+import com.pragma.emazon_transaction.domain.exceptions.ArticleRestockDateNotFoundException;
+import com.pragma.emazon_transaction.domain.utils.Constants;
 import com.pragma.emazon_transaction.infrastructure.configuration.security.filter.JwtValidatorFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,12 +20,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -88,15 +91,68 @@ class SupplyRestControllerTest {
     }
 
     @Test
-    void givenInternalServerError_whenAddSupplyToStock_thenReturns500() throws Exception {
+    void givenValidSupplyRequest_whenAddNewRegisterFromStock_thenReturns200() throws Exception {
 
-        doThrow(new RuntimeException("Server error")).when(supplyHandler).addSupplyToStock(any());
+        SupplyRequest validSupplyRequest = new SupplyRequest(1, 100);
 
-        mockMvc.perform(post("/supply/")
+        doNothing().when(supplyHandler).addNewRegisterFromStock(validSupplyRequest);
+
+        mockMvc.perform(post("/supply/add-new-register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validListSupplyRequest)))
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.statusCode").value(HttpStatus.INTERNAL_SERVER_ERROR.name()))
-                .andExpect(jsonPath("$.message").value("Internal server error"));
+                        .content(objectMapper.writeValueAsString(validSupplyRequest)))
+                .andExpect(status().isOk());
     }
+
+    @Test
+    void givenInvalidSupplyRequest_whenAddNewRegisterFromStock_thenReturns400() throws Exception {
+
+        SupplyRequest invalidSupplyRequest = new SupplyRequest(null, -50); // Datos inválidos
+
+        mockMvc.perform(post("/supply/add-new-register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidSupplyRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.statusCode").value(HttpStatus.BAD_REQUEST.name()))
+                .andExpect(jsonPath("$.message").value(containsString("Article ID cannot be null")))
+                .andExpect(jsonPath("$.message").value(containsString("Article amount must be a positive number")));
+    }
+
+    @Test
+    void givenValidArticleIds_whenGetRestockDate_thenReturns200AndRestockDates() throws Exception {
+
+        List<Integer> articleIds = List.of(1, 2, 3);
+        List<LocalDate> restockDates = List.of(
+                LocalDate.now(),
+                LocalDate.now().plusDays(1),
+                LocalDate.now().plusDays(2)
+        );
+
+        when(supplyHandler.getRestockDate(articleIds)).thenReturn(restockDates);
+
+        mockMvc.perform(get("/supply/")
+                        .param("articleIdList", "1", "2", "3")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0]").value(restockDates.get(0).toString()))
+                .andExpect(jsonPath("$[1]").value(restockDates.get(1).toString()))
+                .andExpect(jsonPath("$[2]").value(restockDates.get(2).toString()));
+    }
+
+    @Test
+    void givenMismatchedArticleIds_whenGetRestockDate_thenThrowsArticleRestockDateNotFoundException() throws Exception {
+
+        List<Integer> articleIds = List.of(1, 2, 3);
+
+        when(supplyHandler.getRestockDate(articleIds))
+                .thenThrow(new ArticleRestockDateNotFoundException(Constants.SUPPLY_NO_RESTOCKING_DATE));
+
+        mockMvc.perform(get("/supply/")
+                        .param("articleIdList", "1", "2", "3")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.statusCode").value(HttpStatus.NOT_FOUND.name()))
+                .andExpect(jsonPath("$.message").value(Constants.SUPPLY_NO_RESTOCKING_DATE));
+    }
+
 }

@@ -38,7 +38,7 @@ class FeignClientAdapterTest {
     @BeforeEach
     public void setUp() {
 
-        defaultSupply = new Supply(1, LocalDate.EPOCH, List.of(10, 5), List.of(100, 600));
+        defaultSupply = new Supply(1, LocalDate.EPOCH, List.of(10, 5), List.of(100, 600), LocalDate.now());
         defaultSupplyStockRequest = new SupplyStockRequest();
         defaultSupplyStockRequest.setSupplyArticleIds(List.of(10, 5));
         defaultSupplyStockRequest.setSupplyArticleAmounts(List.of(100, 600));

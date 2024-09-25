@@ -2,6 +2,7 @@ package com.pragma.emazon_transaction.infrastructure.configuration.exception.exc
 
 
 import com.pragma.emazon_transaction.domain.exceptions.ArticleNotFoundException;
+import com.pragma.emazon_transaction.domain.exceptions.ArticleRestockDateNotFoundException;
 import com.pragma.emazon_transaction.domain.exceptions.ErrorCommunicatingServerException;
 import com.pragma.emazon_transaction.domain.exceptions.JwtIsEmptyException;
 import com.pragma.emazon_transaction.domain.exceptions.ParsingToJsonException;
@@ -169,6 +170,19 @@ public class ControllerAdvisor {
         );
     }
 
+    @ExceptionHandler(ArticleRestockDateNotFoundException.class)
+    public ResponseEntity<Response> handleArticleRestockDateNotFoundException(
+            ArticleRestockDateNotFoundException articleRestockDateNotFoundException
+    ) {
+        return new ResponseEntity<>(
+                Response.builder()
+                        .statusCode(HttpStatus.NOT_FOUND)
+                        .message(articleRestockDateNotFoundException.getMessage())
+                        .build(),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Response> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException methodArgumentNotValidException
@@ -184,17 +198,6 @@ public class ControllerAdvisor {
                         .message(errors.toString())
                         .build(),
                 HttpStatus.BAD_REQUEST
-        );
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Response> handleGenericException(Exception ex) {
-        return new ResponseEntity<>(
-                Response.builder()
-                        .statusCode(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .message(Constants.INTERNAL_SERVER_ERROR)
-                        .build(),
-                HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
 
